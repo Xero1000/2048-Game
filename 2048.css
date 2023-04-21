@@ -1,0 +1,27 @@
+#board {
+    display: flex;
+    flex-direction: column;
+    align-content: space-between;
+    max-width: 60em;
+    max-height: 60em;
+    border-style: solid;
+    border-color: red;
+}
+
+.board-row {
+    display: flex;
+    justify-content: space-between;
+    max-width: 60em;
+    max-height: 15em;
+}
+
+.tile {
+    display: inline-block;
+    width: 10em;
+    max-height: 10em;
+    padding: 1em;
+    text-align: center;
+    font-size: 3em;
+    border-style: solid;
+}
+
