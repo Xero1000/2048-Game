@@ -19,20 +19,20 @@ function setBoard() {
 // A new tile position is generated until an empty tile is found
 function setNewTile() {
     let row = Math.floor(Math.random() * 4)
-    let column = Math.floor(Math.random() * 4)
+    let col = Math.floor(Math.random() * 4)
     let tileGenerator = Math.floor(Math.random() * 10)
     let set = false;
 
     while (!set){
-        if (board[row][column] === 0){
-            let tile = domBoard.children[row].children[column]
+        if (board[row][col] === 0){
+            let tile = domBoard.children[row].children[col]
             if (tileGenerator < 9){
-                board[row][column] = 2
+                board[row][col] = 2
                 tile.textContent = 2
                 tile.classList.add("two")
             }
             else {
-                board[row][column] = 4
+                board[row][col] = 4
                 tile.textContent = 4
                 tile.classList.add("four")
             }
@@ -40,7 +40,7 @@ function setNewTile() {
         }
         else {
             row = Math.floor(Math.random() * 4)
-            column = Math.floor(Math.random() * 4)
+            col = Math.floor(Math.random() * 4)
         }
     }
 }
@@ -50,15 +50,39 @@ function move(direction) {
     
 }
 
+// Shifts every tile as far left as it can go
+// For each row, goes through second to last column
 function moveLeft(){
     for (let row = 0; row <= 3; row++) {
         for (let col = 1; col <= 3; col++) {
             if (board[row][col] != 0) {
+                // Examines tiles left of the current tile
                 for (let previousCol = col - 1; previousCol >= 0; previousCol--) {
+                    // the current and previous tiles inside the DOM
+                    let previousTile = domBoard.children[row].children[previousCol]
+                    let currentTile = domBoard.children[row].children[col]
+
+                    // Shifts tile left until no tile with a value of 0 is left of it
                     if (board[row][previousCol] === 0) {
                         board[row][previousCol] = board[row][col]
+                        currentTile.classList.remove(getTileClass(board[row][col]))
+                        currentTile.textContent = 0
                         board[row][col] = 0
+                        previousTile.textContent = board[row][previousCol]
+                        previousTile.classList.add(getTileClass(board[row][previousCol]))
                         col = col - 1;
+                    }
+                    // If the tile left of the current one has the same value, 
+                    // left tile's value is multiplied by two, and current tile's value
+                    // becomes 0
+                    else if (board[row][previousCol] === board[row][col]) {
+                        previousTile.classList.remove(getTileClass(board[row][previousCol]))
+                        board[row][previousCol] = board[row][previousCol] * 2
+                        previousTile.textContent = board[row][previousCol]
+                        previousTile.classList.add(getTileClass(board[row][previousCol]))
+                        currentTile.classList.remove(getTileClass(board[row][col]))
+                        board[row][col] = 0
+                        currentTile.textContent = 0
                     }
                 }
             }
@@ -90,7 +114,55 @@ function moveDown(){
     }
 }
 
+// The tile is associated with a specific class 
+// depending on the value it is holding
+function getTileClass(tileValue) {
+    tileClass = null;
+    switch (tileValue) {
+        case 2: 
+            tileClass = "two"
+            break
+        case 4: 
+            tileClass = "four"
+            break
+        case 8: 
+            tileClass = "eight"
+            break
+        case 16: 
+            tileClass = "sixteen"
+            break
+        case 32: 
+            tileClass = "thirty-two"
+            break
+        case 64: 
+            tileClass = "sixty-four"
+            break
+        case 128: 
+            tileClass = "one-twenty-eight"
+            break
+        case 256: 
+            tileClass = "two-fifty-six"
+            break
+        case 512: 
+            tileClass = "five-hundred-twelve"
+            break
+        case 1024: 
+            tileClass = "one-thousand-twenty-four"
+            break
+        case 2048: 
+            tileClass = "two-thousand-forty-eight"
+            break
+    }
+
+    return tileClass
+}
+
 setBoard();
+console.log(board[0]);
+console.log(board[1]);
+console.log(board[2]);
+console.log(board[3]);
+console.log("---------------")
 moveLeft();
 console.log(board[0]);
 console.log(board[1]);
