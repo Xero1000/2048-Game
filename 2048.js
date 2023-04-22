@@ -58,6 +58,8 @@ function moveLeft() {
     let boardChanged = false; // If tiles shift, becomes true
 
     for (let row = 0; row <= 3; row++) {
+        let mergibleColumns = [0, 1, 2] // columns where merge hasn't occured yet 
+
         for (let col = 1; col <= 3; col++) {
             if (board[row][col] != 0) {
                 // Examines tiles left of the current tile
@@ -80,7 +82,10 @@ function moveLeft() {
                     // If the tile left of the current one has the same value, 
                     // left tile's value is multiplied by two, and current tile's value
                     // becomes 0
-                    else if (board[row][previousCol] === board[row][col]) {
+                    // Also checks if previousCol is mergible,  
+                    // which prevents merging in the same position more than once in a single move
+                    // Makes it so [4, 2, 0, 2] becomes [0, 0, 4, 4] instead of [0, 0, 0, 8]
+                    else if (board[row][previousCol] === board[row][col] && mergibleColumns.includes(previousCol)) {
                         previousTile.classList.remove(getTileClass(board[row][previousCol]))
                         board[row][previousCol] = board[row][previousCol] * 2
                         previousTile.textContent = board[row][previousCol]
@@ -89,6 +94,11 @@ function moveLeft() {
                         board[row][col] = 0
                         currentTile.textContent = 0
                         boardChanged = true;
+                        mergibleColumns.shift();
+                    }
+                    else {
+                        break; // Makes it so only same value tiles NEXT to each other can merge
+                        // Therefore [0, 2, 4, 2] can't become [0, 0, 4, 4]
                     }
                 }
             }
@@ -108,6 +118,8 @@ function moveRight() {
     let boardChanged = false; // If tiles shift, becomes true
 
     for (let row = 0; row <= 3; row++) {
+        let mergibleColumns = [3, 2, 1] // columns where merge hasn't occured yet 
+
         for (let col = 2; col >= 0; col--) {
             if (board[row][col] != 0) {
                 // Examines tiles right of the current tile
@@ -130,7 +142,7 @@ function moveRight() {
                     // If the tile right of the current one has the same value, 
                     // right tile's value is multiplied by two, and current tile's value
                     // becomes 0
-                    else if (board[row][previousCol] === board[row][col]) {
+                    else if (board[row][previousCol] === board[row][col] && mergibleColumns.includes(previousCol)) {
                         previousTile.classList.remove(getTileClass(board[row][previousCol]))
                         board[row][previousCol] = board[row][previousCol] * 2
                         previousTile.textContent = board[row][previousCol]
@@ -139,15 +151,19 @@ function moveRight() {
                         board[row][col] = 0
                         currentTile.textContent = 0
                         boardChanged = true;
+                        mergibleColumns.shift();
+                    }
+                    else {
+                        break; // Makes it so only same value tiles NEXT to each other can merge
+                        // Therefore [0, 2, 4, 2] can't become [4, 4, 0, 0]
                     }
                 }
             }
         }
     }
-    // New tile is only generated if the board looks different 
-    // than before attempting to move right
     if (boardChanged) {
-        setNewTile()
+        setNewTile() // New tile is only generated if the board looks different 
+        // than before attempting to move right
     }
 }
 
@@ -158,6 +174,8 @@ function moveUp(){
     let boardChanged = false; // If tiles shift, becomes true
 
     for (let col = 0; col <= 3; col++) {
+        let mergibleRows = [0, 1, 2] // rows where merge hasn't occured yet 
+
         for (let row = 1; row <= 3; row++) {
             if (board[row][col] != 0) {
                 // Examines tiles above of the current tile
@@ -181,7 +199,7 @@ function moveUp(){
                     // If the tile above the current one has the same value, 
                     // the above tile's value is multiplied by two, and current tile's value
                     // becomes 0
-                    else if (board[previousRow][col] === board[row][col]) {
+                    else if (board[previousRow][col] === board[row][col] && mergibleRows.includes(previousRow)) {
                         previousTile.classList.remove(getTileClass(board[previousRow][col]))
                         board[previousRow][col] = board[previousRow][col] * 2
                         previousTile.textContent = board[previousRow][col]
@@ -190,15 +208,18 @@ function moveUp(){
                         board[row][col] = 0
                         currentTile.textContent = 0
                         boardChanged = true;
+                        mergibleRows.shift();
+                    }
+                    else {
+                        break; 
                     }
                 }
             }
         }
     }
-    // New tile is only generated if the board looks different 
-    // than before attempting to move up
     if (boardChanged) {
-        setNewTile()
+        setNewTile() // New tile is only generated if the board looks different 
+        // than before attempting to move right
     }
 }
 
@@ -209,6 +230,8 @@ function moveDown(){
     let boardChanged = false; // If tiles shift, becomes true
 
     for (let col = 0; col <= 3; col++) {
+        let mergibleRows = [3, 2, 1] // rows where merge hasn't occured yet 
+
         for (let row = 2; row >= 0; row--) {
             if (board[row][col] != 0) {
                 // Examines tiles below of the current tile
@@ -232,7 +255,7 @@ function moveDown(){
                     // If the tile below the current one has the same value, 
                     // the below tile's value is multiplied by two, and current tile's value
                     // becomes 0
-                    else if (board[previousRow][col] === board[row][col]) {
+                    else if (board[previousRow][col] === board[row][col] && mergibleRows.includes(previousRow)) {
                         previousTile.classList.remove(getTileClass(board[previousRow][col]))
                         board[previousRow][col] = board[previousRow][col] * 2
                         previousTile.textContent = board[previousRow][col]
@@ -241,15 +264,18 @@ function moveDown(){
                         board[row][col] = 0
                         currentTile.textContent = 0
                         boardChanged = true;
+                        mergibleRows.shift();
+                    }
+                    else {
+                        break;
                     }
                 }
             }
         }
     }
-    // New tile is only generated if the board looks different 
-    // than before attempting to move down
     if (boardChanged) {
-        setNewTile()
+        setNewTile() // New tile is only generated if the board looks different 
+        // than before attempting to move right
     }
 }
 
@@ -300,25 +326,49 @@ console.log(board[0]);
 console.log(board[1]);
 console.log(board[2]);
 console.log(board[3]);
-console.log("---------------")
+console.log("---MOVE LEFT---")
 moveLeft();
 console.log(board[0]);
 console.log(board[1]);
 console.log(board[2]);
 console.log(board[3]);
-console.log("---------------")
+console.log("---MOVE UP---")
 moveUp();
 console.log(board[0]);
 console.log(board[1]);
 console.log(board[2]);
 console.log(board[3]);
-console.log("---------------")
+console.log("---MOVE RIGHT---")
 moveRight();
 console.log(board[0]);
 console.log(board[1]);
 console.log(board[2]);
 console.log(board[3]);
-console.log("---------------")
+console.log("---MOVE DOWN---")
+moveDown();
+console.log(board[0]);
+console.log(board[1]);
+console.log(board[2]);
+console.log(board[3]);
+console.log("---MOVE LEFT---")
+moveLeft();
+console.log(board[0]);
+console.log(board[1]);
+console.log(board[2]);
+console.log(board[3]);
+console.log("---MOVE UP---")
+moveUp();
+console.log(board[0]);
+console.log(board[1]);
+console.log(board[2]);
+console.log(board[3]);
+console.log("---MOVE RIGHT---")
+moveRight();
+console.log(board[0]);
+console.log(board[1]);
+console.log(board[2]);
+console.log(board[3]);
+console.log("---MOVE DOWN---")
 moveDown();
 console.log(board[0]);
 console.log(board[1]);
