@@ -36,6 +36,7 @@ function setNewTile() {
                 tile.textContent = 4
                 tile.classList.add("four")
             }
+            tile.classList.remove("empty")
             set = true;
         }
         else {
@@ -44,11 +45,6 @@ function setNewTile() {
         }
     }
     console.log(`new tile: ${row}, ${col}`)
-}
-
-// checks if the move can be done before moving
-function move(direction) {
-    
 }
 
 // Shifts every tile as far left as it can go
@@ -68,23 +64,24 @@ function moveLeft() {
                     let previousTile = domBoard.children[row].children[previousCol]
                     let currentTile = domBoard.children[row].children[col]
 
-                    // Shifts tile left until no tile with a value of 0 is left of it
+                    // Shifts tile left until no empty tile is left of it
                     if (board[row][previousCol] === 0) {
                         board[row][previousCol] = board[row][col]
                         currentTile.classList.remove(getTileClass(board[row][col]))
+                        currentTile.classList.add("empty")
                         currentTile.textContent = 0
                         board[row][col] = 0
                         previousTile.textContent = board[row][previousCol]
                         previousTile.classList.add(getTileClass(board[row][previousCol]))
+                        previousTile.classList.remove("empty")
                         col = col - 1;
                         boardChanged = true;
                     }
                     // If the tile left of the current one has the same value, 
-                    // left tile's value is multiplied by two, and current tile's value
-                    // becomes 0
+                    // left tile's value is multiplied by two, and current tile becomes empty
                     // Also checks if previousCol is mergible,  
                     // which prevents merging in the same position more than once in a single move
-                    // Makes it so [4, 2, 0, 2] becomes [0, 0, 4, 4] instead of [0, 0, 0, 8]
+                    // Makes it so [4, 2, empty, 2] becomes [empty, empty, 4, 4] instead of [empty, empty, empty, 8]
                     else if (board[row][previousCol] === board[row][col] && mergibleColumns.includes(previousCol)) {
                         previousTile.classList.remove(getTileClass(board[row][previousCol]))
                         board[row][previousCol] = board[row][previousCol] * 2
@@ -93,12 +90,13 @@ function moveLeft() {
                         currentTile.classList.remove(getTileClass(board[row][col]))
                         board[row][col] = 0
                         currentTile.textContent = 0
+                        currentTile.classList.add("empty")
                         boardChanged = true;
                         mergibleColumns.shift();
                     }
                     else {
                         break; // Makes it so only same value tiles NEXT to each other can merge
-                        // Therefore [0, 2, 4, 2] can't become [0, 0, 4, 4]
+                        // Therefore [empty, 2, 4, 2] can't become [empty, empty, 4, 4]
                     }
                 }
             }
@@ -128,20 +126,21 @@ function moveRight() {
                     let previousTile = domBoard.children[row].children[previousCol]
                     let currentTile = domBoard.children[row].children[col]
 
-                    // Shifts tile right until no tile with a value of 0 is right of it
+                    // Shifts tile right until no empty tile is right of it
                     if (board[row][previousCol] === 0) {
                         board[row][previousCol] = board[row][col]
                         currentTile.classList.remove(getTileClass(board[row][col]))
+                        currentTile.classList.add("empty")
                         currentTile.textContent = 0
                         board[row][col] = 0
                         previousTile.textContent = board[row][previousCol]
                         previousTile.classList.add(getTileClass(board[row][previousCol]))
+                        previousTile.classList.remove("empty")
                         col = col + 1;
                         boardChanged = true;
                     }
                     // If the tile right of the current one has the same value, 
-                    // right tile's value is multiplied by two, and current tile's value
-                    // becomes 0
+                    // right tile's value is multiplied by two, and current tile becomes empty
                     else if (board[row][previousCol] === board[row][col] && mergibleColumns.includes(previousCol)) {
                         previousTile.classList.remove(getTileClass(board[row][previousCol]))
                         board[row][previousCol] = board[row][previousCol] * 2
@@ -150,12 +149,13 @@ function moveRight() {
                         currentTile.classList.remove(getTileClass(board[row][col]))
                         board[row][col] = 0
                         currentTile.textContent = 0
+                        currentTile.classList.add("empty")
                         boardChanged = true;
                         mergibleColumns.shift();
                     }
                     else {
                         break; // Makes it so only same value tiles NEXT to each other can merge
-                        // Therefore [0, 2, 4, 2] can't become [4, 4, 0, 0]
+                        // Therefore [empty, 2, 4, 2] can't become [4, 4, empty, empty]
                     }
                 }
             }
@@ -185,20 +185,21 @@ function moveUp(){
                     let previousTile = domBoard.children[previousRow].children[col]
                     let currentTile = domBoard.children[row].children[col]
 
-                    // Shifts tile up until no tile with a value of 0 is above it
+                    // Shifts tile up until no empty tile is above it
                     if (board[previousRow][col] === 0) {
                         board[previousRow][col] = board[row][col]
                         currentTile.classList.remove(getTileClass(board[row][col]))
+                        currentTile.classList.add("empty")
                         currentTile.textContent = 0
                         board[row][col] = 0
                         previousTile.textContent = board[previousRow][col]
                         previousTile.classList.add(getTileClass(board[previousRow][col]))
+                        previousTile.classList.remove("empty")
                         row = row - 1;
                         boardChanged = true;
                     }
                     // If the tile above the current one has the same value, 
-                    // the above tile's value is multiplied by two, and current tile's value
-                    // becomes 0
+                    // the above tile's value is multiplied by two, and current tile becomes empty
                     else if (board[previousRow][col] === board[row][col] && mergibleRows.includes(previousRow)) {
                         previousTile.classList.remove(getTileClass(board[previousRow][col]))
                         board[previousRow][col] = board[previousRow][col] * 2
@@ -207,6 +208,7 @@ function moveUp(){
                         currentTile.classList.remove(getTileClass(board[row][col]))
                         board[row][col] = 0
                         currentTile.textContent = 0
+                        currentTile.classList.add("empty")
                         boardChanged = true;
                         mergibleRows.shift();
                     }
@@ -241,20 +243,21 @@ function moveDown(){
                     let previousTile = domBoard.children[previousRow].children[col]
                     let currentTile = domBoard.children[row].children[col]
 
-                    // Shifts tile downward until no tile with a value of 0 is below it
+                    // Shifts tile downward until no empty tile is below it
                     if (board[previousRow][col] === 0) {
                         board[previousRow][col] = board[row][col]
                         currentTile.classList.remove(getTileClass(board[row][col]))
+                        currentTile.classList.add("empty")
                         currentTile.textContent = 0
                         board[row][col] = 0
                         previousTile.textContent = board[previousRow][col]
                         previousTile.classList.add(getTileClass(board[previousRow][col]))
+                        previousTile.classList.remove("empty")
                         row = row + 1;
                         boardChanged = true;
                     }
                     // If the tile below the current one has the same value, 
-                    // the below tile's value is multiplied by two, and current tile's value
-                    // becomes 0
+                    // the below tile's value is multiplied by two, and current tile becomes empty
                     else if (board[previousRow][col] === board[row][col] && mergibleRows.includes(previousRow)) {
                         previousTile.classList.remove(getTileClass(board[previousRow][col]))
                         board[previousRow][col] = board[previousRow][col] * 2
@@ -263,6 +266,7 @@ function moveDown(){
                         currentTile.classList.remove(getTileClass(board[row][col]))
                         board[row][col] = 0
                         currentTile.textContent = 0
+                        currentTile.classList.add("empty")
                         boardChanged = true;
                         mergibleRows.shift();
                     }
@@ -312,66 +316,93 @@ function getTileClass(tileValue) {
             tileClass = "five-hundred-twelve"
             break
         case 1024: 
-            tileClass = "one-thousand-twenty-four"
+            tileClass = "ten-twenty-four"
             break
         case 2048: 
-            tileClass = "two-thousand-forty-eight"
+            tileClass = "twenty-forty-eight"
             break
     }
     return tileClass
 }
 
 setBoard();
-console.log(board[0]);
-console.log(board[1]);
-console.log(board[2]);
-console.log(board[3]);
-console.log("---MOVE LEFT---")
-moveLeft();
-console.log(board[0]);
-console.log(board[1]);
-console.log(board[2]);
-console.log(board[3]);
-console.log("---MOVE UP---")
-moveUp();
-console.log(board[0]);
-console.log(board[1]);
-console.log(board[2]);
-console.log(board[3]);
-console.log("---MOVE RIGHT---")
-moveRight();
-console.log(board[0]);
-console.log(board[1]);
-console.log(board[2]);
-console.log(board[3]);
-console.log("---MOVE DOWN---")
-moveDown();
-console.log(board[0]);
-console.log(board[1]);
-console.log(board[2]);
-console.log(board[3]);
-console.log("---MOVE LEFT---")
-moveLeft();
-console.log(board[0]);
-console.log(board[1]);
-console.log(board[2]);
-console.log(board[3]);
-console.log("---MOVE UP---")
-moveUp();
-console.log(board[0]);
-console.log(board[1]);
-console.log(board[2]);
-console.log(board[3]);
-console.log("---MOVE RIGHT---")
-moveRight();
-console.log(board[0]);
-console.log(board[1]);
-console.log(board[2]);
-console.log(board[3]);
-console.log("---MOVE DOWN---")
-moveDown();
-console.log(board[0]);
-console.log(board[1]);
-console.log(board[2]);
-console.log(board[3]);
+
+// keyboard events trigger moves
+// Specifically a, s, d, f
+// or arrow keys
+function move(event) {
+    let key = event.key;
+    //console.log(key);
+    if (key === "a" || key === "A" || key === "ArrowLeft") {
+        moveLeft()
+    }
+    else if (key === "d" || key === "D" || key ==="ArrowRight")
+    {
+        moveRight()
+    }
+    else if (key === "w" || key === "W" || key ==="ArrowUp")
+    {
+        moveUp()
+    }
+    else if (key === "s" || key === "S" || key ==="ArrowDown")
+    {
+        moveDown()
+    }
+}
+
+
+
+
+// console.log(board[0]);
+// console.log(board[1]);
+// console.log(board[2]);
+// console.log(board[3]);
+// console.log("---MOVE LEFT---")
+// moveLeft();
+// console.log(board[0]);
+// console.log(board[1]);
+// console.log(board[2]);
+// console.log(board[3]);
+// console.log("---MOVE UP---")
+// moveUp();
+// console.log(board[0]);
+// console.log(board[1]);
+// console.log(board[2]);
+// console.log(board[3]);
+// console.log("---MOVE RIGHT---")
+// moveRight();
+// console.log(board[0]);
+// console.log(board[1]);
+// console.log(board[2]);
+// console.log(board[3]);
+// console.log("---MOVE DOWN---")
+// moveDown();
+// console.log(board[0]);
+// console.log(board[1]);
+// console.log(board[2]);
+// console.log(board[3]);
+// console.log("---MOVE LEFT---")
+// moveLeft();
+// console.log(board[0]);
+// console.log(board[1]);
+// console.log(board[2]);
+// console.log(board[3]);
+// console.log("---MOVE UP---")
+// moveUp();
+// console.log(board[0]);
+// console.log(board[1]);
+// console.log(board[2]);
+// console.log(board[3]);
+// console.log("---MOVE RIGHT---")
+// moveRight();
+// console.log(board[0]);
+// console.log(board[1]);
+// console.log(board[2]);
+// console.log(board[3]);
+// console.log("---MOVE DOWN---")
+// moveDown();
+// console.log(board[0]);
+// console.log(board[1]);
+// console.log(board[2]);
+// console.log(board[3]);
 
