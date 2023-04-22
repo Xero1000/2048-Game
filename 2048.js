@@ -2,6 +2,9 @@
 let q = document.querySelector.bind(document);
 let domBoard = q("#board");
 
+let scoreDisplay = q("#score")
+let score = 0;
+
 // 2D Array to represent 2048 board
 let board = [[0, 0, 0, 0],
              [0, 0, 0, 0],
@@ -84,15 +87,16 @@ function moveLeft() {
                     // Makes it so [4, 2, empty, 2] becomes [empty, empty, 4, 4] instead of [empty, empty, empty, 8]
                     else if (board[row][previousCol] === board[row][col] && mergibleColumns.includes(previousCol)) {
                         previousTile.classList.remove(getTileClass(board[row][previousCol]))
-                        board[row][previousCol] = board[row][previousCol] * 2
+                        board[row][previousCol] *= 2
                         previousTile.textContent = board[row][previousCol]
                         previousTile.classList.add(getTileClass(board[row][previousCol]))
                         currentTile.classList.remove(getTileClass(board[row][col]))
                         board[row][col] = 0
                         currentTile.textContent = 0
                         currentTile.classList.add("empty")
-                        boardChanged = true;
                         mergibleColumns.shift();
+                        updateScore(board[row][previousCol])
+                        boardChanged = true;
                     }
                     else {
                         break; // Makes it so only same value tiles NEXT to each other can merge
@@ -143,15 +147,16 @@ function moveRight() {
                     // right tile's value is multiplied by two, and current tile becomes empty
                     else if (board[row][previousCol] === board[row][col] && mergibleColumns.includes(previousCol)) {
                         previousTile.classList.remove(getTileClass(board[row][previousCol]))
-                        board[row][previousCol] = board[row][previousCol] * 2
+                        board[row][previousCol] *= 2
                         previousTile.textContent = board[row][previousCol]
                         previousTile.classList.add(getTileClass(board[row][previousCol]))
                         currentTile.classList.remove(getTileClass(board[row][col]))
                         board[row][col] = 0
                         currentTile.textContent = 0
                         currentTile.classList.add("empty")
-                        boardChanged = true;
                         mergibleColumns.shift();
+                        updateScore(board[row][previousCol])
+                        boardChanged = true;
                     }
                     else {
                         break; // Makes it so only same value tiles NEXT to each other can merge
@@ -202,15 +207,16 @@ function moveUp(){
                     // the above tile's value is multiplied by two, and current tile becomes empty
                     else if (board[previousRow][col] === board[row][col] && mergibleRows.includes(previousRow)) {
                         previousTile.classList.remove(getTileClass(board[previousRow][col]))
-                        board[previousRow][col] = board[previousRow][col] * 2
+                        board[previousRow][col] *= 2
                         previousTile.textContent = board[previousRow][col]
                         previousTile.classList.add(getTileClass(board[previousRow][col]))
                         currentTile.classList.remove(getTileClass(board[row][col]))
                         board[row][col] = 0
                         currentTile.textContent = 0
                         currentTile.classList.add("empty")
-                        boardChanged = true;
                         mergibleRows.shift();
+                        updateScore(board[previousRow][col])
+                        boardChanged = true;
                     }
                     else {
                         break; 
@@ -260,15 +266,16 @@ function moveDown(){
                     // the below tile's value is multiplied by two, and current tile becomes empty
                     else if (board[previousRow][col] === board[row][col] && mergibleRows.includes(previousRow)) {
                         previousTile.classList.remove(getTileClass(board[previousRow][col]))
-                        board[previousRow][col] = board[previousRow][col] * 2
+                        board[previousRow][col] *= 2
                         previousTile.textContent = board[previousRow][col]
                         previousTile.classList.add(getTileClass(board[previousRow][col]))
                         currentTile.classList.remove(getTileClass(board[row][col]))
                         board[row][col] = 0
                         currentTile.textContent = 0
                         currentTile.classList.add("empty")
-                        boardChanged = true;
                         mergibleRows.shift();
+                        updateScore(board[previousRow][col])
+                        boardChanged = true;
                     }
                     else {
                         break;
@@ -323,6 +330,11 @@ function getTileClass(tileValue) {
             break
     }
     return tileClass
+}
+
+function updateScore(number) {
+    score += number;
+    scoreDisplay.textContent = `Score: ${score}`
 }
 
 setBoard();
