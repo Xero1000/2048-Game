@@ -90,7 +90,7 @@ function moveLeft() {
                     // Makes it so [4, 2, empty, 2] becomes [empty, empty, 4, 4] instead of [empty, empty, empty, 8]
                     else if (board[row][previousCol] === board[row][col] && mergibleColumns.includes(previousCol)) {
                         previousTile.classList.remove(getTileClass(board[row][previousCol]))
-                        board[row][previousCol] = 2048
+                        board[row][previousCol] *= 2
                         previousTile.textContent = board[row][previousCol]
                         previousTile.classList.add(getTileClass(board[row][previousCol]))
                         currentTile.classList.remove(getTileClass(board[row][col]))
