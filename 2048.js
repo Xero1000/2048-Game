@@ -350,7 +350,6 @@ function move(event) {
     if (hasNextMoves && !winner) {
         if (key === "a" || key === "A" || key === "ArrowLeft") {
             moveLeft()
-            console.log("Move finished")
         }
         else if (key === "d" || key === "D" || key ==="ArrowRight")
         {
@@ -364,7 +363,7 @@ function move(event) {
         {
             moveDown()
         }
-        console.log(hasNextMoves)
+        hasNextMoves = checkForMoves()
     }
     
     if (!hasNextMoves) { 
@@ -380,6 +379,10 @@ function move(event) {
 // After each move, this function checks if the user
 // has another move they can make
 function checkForMoves() {
+    if (board[0][0] === 0) {
+        return true
+    }
+    // loops check every tile after the first one at row 0, col 0
     for (let row = 0; row <= 3; row++) {
         for (let col = 0; col < 3; col++) {
             let currentTile = board[row][col]
