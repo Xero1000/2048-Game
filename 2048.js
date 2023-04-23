@@ -1,9 +1,12 @@
-// Query selector to select the board in the DOM
-let q = document.querySelector.bind(document);
-let domBoard = q("#board");
+let q = document.querySelector.bind(document)
+let domBoard = q("#board")
 
 let scoreDisplay = q("#score")
-let score = 0;
+let score = 0
+
+let endGameMessage = q('#end-game-message')
+let hasNextMoves = true
+let winner = false
 
 // 2D Array to represent 2048 board
 let board = [[0, 0, 0, 0],
@@ -87,7 +90,7 @@ function moveLeft() {
                     // Makes it so [4, 2, empty, 2] becomes [empty, empty, 4, 4] instead of [empty, empty, empty, 8]
                     else if (board[row][previousCol] === board[row][col] && mergibleColumns.includes(previousCol)) {
                         previousTile.classList.remove(getTileClass(board[row][previousCol]))
-                        board[row][previousCol] *= 2
+                        board[row][previousCol] = 2048
                         previousTile.textContent = board[row][previousCol]
                         previousTile.classList.add(getTileClass(board[row][previousCol]))
                         currentTile.classList.remove(getTileClass(board[row][col]))
@@ -327,6 +330,7 @@ function getTileClass(tileValue) {
             break
         case 2048: 
             tileClass = "twenty-forty-eight"
+            winner = true
             break
     }
     return tileClass
@@ -337,30 +341,68 @@ function updateScore(number) {
     scoreDisplay.textContent = `Score: ${score}`
 }
 
-setBoard();
-
 // keyboard events trigger moves
 // Specifically a, s, d, f
 // or arrow keys
 function move(event) {
     let key = event.key;
     //console.log(key);
-    if (key === "a" || key === "A" || key === "ArrowLeft") {
-        moveLeft()
+    if (hasNextMoves && !winner) {
+        if (key === "a" || key === "A" || key === "ArrowLeft") {
+            moveLeft()
+            console.log("Move finished")
+        }
+        else if (key === "d" || key === "D" || key ==="ArrowRight")
+        {
+            moveRight()
+        }
+        else if (key === "w" || key === "W" || key ==="ArrowUp")
+        {
+            moveUp()
+        }
+        else if (key === "s" || key === "S" || key ==="ArrowDown")
+        {
+            moveDown()
+        }
+        console.log(hasNextMoves)
     }
-    else if (key === "d" || key === "D" || key ==="ArrowRight")
-    {
-        moveRight()
+    
+    if (!hasNextMoves) { 
+        endGameMessage.textContent = `No Moves Left`
+        endGameMessage.style.color = "red"
     }
-    else if (key === "w" || key === "W" || key ==="ArrowUp")
-    {
-        moveUp()
-    }
-    else if (key === "s" || key === "S" || key ==="ArrowDown")
-    {
-        moveDown()
+    else if (winner) {
+        endGameMessage.textContent = `Congratulations! You've reached 2048!`
+        endGameMessage.style.color = "green"
     }
 }
+
+// After each move, this function checks if the user
+// has another move they can make
+function checkForMoves() {
+    for (let row = 0; row <= 3; row++) {
+        for (let col = 0; col < 3; col++) {
+            let currentTile = board[row][col]
+            let rightTile = board[row][col + 1]
+            if (rightTile === 0 || rightTile === currentTile ) {
+                return true
+            }
+        }
+    }
+    for (let col = 0; col <= 3; col++) {
+        for (let row = 0; row < 3; row++) {
+            let currentTile = board[row][col]
+            let belowTile = board[row + 1][col]
+            if (belowTile === 0 || belowTile === currentTile) {
+                return true
+            }
+        }
+    }
+    return false
+}
+
+setBoard(); 
+
 
 
 
