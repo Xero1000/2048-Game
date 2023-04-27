@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techtalentsouth.FullStack2048.models.UserHighscore;
@@ -16,7 +15,7 @@ import com.techtalentsouth.FullStack2048.repository.GameRepository;
 public class GameController {
 	
 	@Autowired
-	GameRepository gameRepository;
+	private GameRepository gameRepository;
 	
 	@GetMapping("/test")
 	public String endpoint() {
@@ -26,11 +25,16 @@ public class GameController {
 	@GetMapping("/highscores")
 	public List<UserHighscore> getHighscores() {
 		List<UserHighscore> highscores = gameRepository.findAll();
+		sort(highscores);
 		return highscores;
 	}
 	
 	@PostMapping("/highscores")
 	public void addHighscore(@RequestBody UserHighscore highscore) {
 		gameRepository.save(highscore);
+	}
+	
+	public void sort(List<UserHighscore> highscores) {
+		highscores.sort((score2, score1) -> score1.getHighscore().compareTo(score2.getHighscore()));
 	}
 }

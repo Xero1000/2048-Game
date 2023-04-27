@@ -13,13 +13,13 @@ public class UserHighscore {
 	private Long id;
 	
 	private String name;
-	private int highscore;
+	private Integer highscore;
 	
 	public UserHighscore() {
 		
 	}
 	
-	public UserHighscore(String name, int highscore) {
+	public UserHighscore(String name, Integer highscore) {
 		this.name = name;
 		this.highscore = highscore;
 	}
@@ -32,11 +32,11 @@ public class UserHighscore {
 		this.name = name;
 	}
 
-	public int getHighscore() {
+	public Integer getHighscore() {
 		return highscore;
 	}
 
-	public void setHighscore(int highscore) {
+	public void setHighscore(Integer highscore) {
 		this.highscore = highscore;
 	}
 
