@@ -1,5 +1,6 @@
 package com.techtalentsouth.FullStack2048.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ public class GameController {
 	
 	@Autowired
 	private GameRepository gameRepository;
+	private List<UserHighscore> highscores = new ArrayList<>();
+	private final int MAX_HIGHSCORE_ENTRIES = 5;
 	
 	@GetMapping("/test")
 	public String endpoint() {
@@ -24,17 +27,28 @@ public class GameController {
 	
 	@GetMapping("/highscores")
 	public List<UserHighscore> getHighscores() {
-		List<UserHighscore> highscores = gameRepository.findAll();
+		highscores = gameRepository.findAll();
 		sort(highscores);
 		return highscores;
 	}
 	
 	@PostMapping("/highscores")
 	public void addHighscore(@RequestBody UserHighscore highscore) {
-		gameRepository.save(highscore);
+		highscores = gameRepository.findAll();
+		sort(highscores);
+		if (highscores.size() == 0 || highscores.size() < MAX_HIGHSCORE_ENTRIES) {
+			gameRepository.save(highscore);
+		}
+		else if (highscore.getHighscore() > highscores.get(0).getHighscore()) {
+			gameRepository.save(highscore);
+			
+			if (gameRepository.count() > MAX_HIGHSCORE_ENTRIES) {
+				gameRepository.deleteById(highscores.get(0).getId());
+			}
+		}
 	}
 	
 	public void sort(List<UserHighscore> highscores) {
-		highscores.sort((score2, score1) -> score1.getHighscore().compareTo(score2.getHighscore()));
+		highscores.sort((score1, score2) -> score1.getHighscore().compareTo(score2.getHighscore()));
 	}
 }
