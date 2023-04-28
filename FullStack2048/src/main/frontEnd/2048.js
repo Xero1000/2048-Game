@@ -8,6 +8,9 @@ let endGameMessage = q('#end-game-message')
 let hasNextMoves = true
 let winner = false
 
+let highscoreBoardBody = q("#highscore-board-body")
+console.log(highscoreBoardBody.textContent)
+
 // 2D Array to represent 2048 board
 let board = [[0, 0, 0, 0],
              [0, 0, 0, 0],
@@ -51,6 +54,42 @@ function setNewTile() {
         }
     }
     console.log(`new tile: ${row}, ${col}`)
+}
+
+// keyboard events trigger moves
+// Specifically a, s, d, f
+// or arrow keys
+function move(event) {
+    let key = event.key;
+    //console.log(key);
+    if (hasNextMoves && !winner) {
+        if (key === "a" || key === "A" || key === "ArrowLeft") 
+        {
+            moveLeft()
+        }
+        else if (key === "d" || key === "D" || key ==="ArrowRight")
+        {
+            moveRight()
+        }
+        else if (key === "w" || key === "W" || key ==="ArrowUp")
+        {
+            moveUp()
+        }
+        else if (key === "s" || key === "S" || key ==="ArrowDown")
+        {
+            moveDown()
+        }
+        hasNextMoves = checkForMoves()
+    }
+    
+    if (!hasNextMoves) { 
+        endGameMessage.textContent = `No Moves Left`
+        endGameMessage.style.color = "red"
+    }
+    else if (winner) {
+        endGameMessage.textContent = `Congratulations! You've reached 2048!`
+        endGameMessage.style.color = "green"
+    }
 }
 
 // Shifts every tile as far left as it can go
@@ -341,41 +380,7 @@ function updateScore(number) {
     scoreDisplay.textContent = `Score: ${score}`
 }
 
-// keyboard events trigger moves
-// Specifically a, s, d, f
-// or arrow keys
-function move(event) {
-    let key = event.key;
-    //console.log(key);
-    if (hasNextMoves && !winner) {
-        if (key === "a" || key === "A" || key === "ArrowLeft") 
-        {
-            moveLeft()
-        }
-        else if (key === "d" || key === "D" || key ==="ArrowRight")
-        {
-            moveRight()
-        }
-        else if (key === "w" || key === "W" || key ==="ArrowUp")
-        {
-            moveUp()
-        }
-        else if (key === "s" || key === "S" || key ==="ArrowDown")
-        {
-            moveDown()
-        }
-        hasNextMoves = checkForMoves()
-    }
-    
-    if (!hasNextMoves) { 
-        endGameMessage.textContent = `No Moves Left`
-        endGameMessage.style.color = "red"
-    }
-    else if (winner) {
-        endGameMessage.textContent = `Congratulations! You've reached 2048!`
-        endGameMessage.style.color = "green"
-    }
-}
+
 
 // After each move, this function checks if the user
 // has another move they can make
@@ -405,6 +410,18 @@ function checkForMoves() {
     return false
 }
 
+async function getHighscores() {
+    let response = await fetch("http://localhost:8080/highscores")
+    let highscores = await response.json()
+
+    for (let i = 0; i < highscores.length; i++){
+        let highScoreEntry = document.createElement('li')
+        highScoreEntry.textContent = highscores[i].name + ": " + highscores[i].highscore
+        highscoreBoardBody.children[0].appendChild(highScoreEntry)
+    }
+}
+
+getHighscores();
 setBoard(); 
 
 

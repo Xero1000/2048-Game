@@ -13,6 +13,11 @@ h1 {
     border-color: red;
 }
 
+#highscore-board {
+    display: none;
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
 .board-row {
     display: flex;
     justify-content: space-between;
