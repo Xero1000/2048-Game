@@ -3,6 +3,10 @@ h1 {
     text-align: center;
 }
 
+form {
+    /* display: hidden; */
+}
+
 #board {
     display: flex;
     flex-direction: column;

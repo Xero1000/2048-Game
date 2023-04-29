@@ -23,13 +23,16 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto me-5 mb-2 mb-lg-0">
                   <li class="nav-item">
-                    <a class="nav-link" aria-current="page" onClick="displayHighScores()" data-bs-toggle="modal" data-bs-target="#highscore-board">Highscore Board</a>
+                    <a class="nav-link" href="#" aria-current="page" data-bs-toggle="modal" data-bs-target="#highscore-board">Highscore Board</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#">Load Game</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#">Save Game</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" onClick="restart()">Restart Game</a>
                   </li>
                 </ul>
               </div>
@@ -83,6 +86,12 @@
                     <div id="end-game-body" class="modal-body">
                         <h1></h1>
                         <h1></h1>
+                        <h1></h1>
+                        <form>
+                            <label for="name">Enter Name: </label>
+                            <input type="text" id="name" name="name">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick="postHighScore()">Submit</button>
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" onClick="restart()">Restart?</button>
@@ -102,10 +111,15 @@
                     </div>
                     <div id="highscore-board-body" class="modal-body">
                         <ol>
-
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
                         </ol>
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

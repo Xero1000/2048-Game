@@ -435,10 +435,28 @@ async function getHighscores() {
     highscores = await response.json()
 
     for (let i = 0; i < highscores.length; i++){
-        let highScoreEntry = document.createElement('li')
+        let highScoreEntry = highscoreBoardBody.children[0].children[i]
         highScoreEntry.textContent = highscores[i].name + ": " + highscores[i].highscore
-        highscoreBoardBody.children[0].appendChild(highScoreEntry)
+
     }
+    console.log(highscores)
+}
+
+async function postHighScore() {
+    let name = q("#name").value
+    
+    await fetch("http://localhost:8080/highscores", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: name,
+            highscore: score
+        })
+    })
+    highscores = {}
+    getHighscores()
 }
 
 getHighscores();

@@ -49,6 +49,6 @@ public class GameController {
 	}
 	
 	public void sort(List<UserHighscore> highscores) {
-		highscores.sort((score1, score2) -> score1.getHighscore().compareTo(score2.getHighscore()));
+		highscores.sort((score2, score1) -> score1.getHighscore().compareTo(score2.getHighscore()));
 	}
 }
