@@ -18,6 +18,10 @@ h1 {
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
+#end-game-modal {
+    display: none;
+}
+
 .board-row {
     display: flex;
     justify-content: space-between;

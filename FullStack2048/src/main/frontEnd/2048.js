@@ -3,13 +3,15 @@ let domBoard = q("#board")
 
 let scoreDisplay = q("#score")
 let score = 0
+let highscores = {}
 
-let endGameMessage = q('#end-game-message')
+let endGameModal = $('#end-game-modal')
+let endGameLabel = q('#end-game-label')
+let endGameBody = q('#end-game-body')
 let hasNextMoves = true
 let winner = false
 
 let highscoreBoardBody = q("#highscore-board-body")
-console.log(highscoreBoardBody.textContent)
 
 // 2D Array to represent 2048 board
 let board = [[0, 0, 0, 0],
@@ -21,6 +23,12 @@ let board = [[0, 0, 0, 0],
 function setBoard() {
     setNewTile();
     setNewTile();
+}
+
+// Resets the page to initial state 
+// For if user wants to start a new game
+function restart() {
+    location.reload()
 }
 
 // Generates new tiles
@@ -35,7 +43,7 @@ function setNewTile() {
     while (!set){
         if (board[row][col] === 0){
             let tile = domBoard.children[row].children[col]
-            if (tileGenerator < 9){
+            if (tileGenerator < 9) {
                 board[row][col] = 2
                 tile.textContent = 2
                 tile.classList.add("two")
@@ -83,12 +91,24 @@ function move(event) {
     }
     
     if (!hasNextMoves) { 
-        endGameMessage.textContent = `No Moves Left`
-        endGameMessage.style.color = "red"
+        endGameModal.modal("show")
+        endGameLabel.textContent = "Game Over"
+        endGameLabel.style.color = "red"
+
+        let endGameMessage = endGameBody.children[0]
+        endGameMessage.textContent = "You have run out of moves"
+        let finalScore = endGameBody.children[1]
+        finalScore.textContent = `Final Score: ${score}`
     }
     else if (winner) {
-        endGameMessage.textContent = `Congratulations! You've reached 2048!`
-        endGameMessage.style.color = "green"
+        endGameModal.modal("show")
+        endGameLabel.textContent = "Congratulations!"
+        endGameLabel.style.color = "green"
+
+        let endGameMessage = endGameBody.children[0]
+        endGameMessage.textContent = " You've reached 2048!"
+        let finalScore = endGameBody.children[1]
+        finalScore.textContent = `Final Score: ${score}`
     }
 }
 
@@ -129,7 +149,7 @@ function moveLeft() {
                     // Makes it so [4, 2, empty, 2] becomes [4, 4, empty, empty] instead of [8, empty, empty, empty]
                     else if (board[row][previousCol] === board[row][col] && mergibleColumns.includes(previousCol)) {
                         previousTile.classList.remove(getTileClass(board[row][previousCol]))
-                        board[row][previousCol] *= 2
+                        board[row][previousCol] = 2048
                         previousTile.textContent = board[row][previousCol]
                         previousTile.classList.add(getTileClass(board[row][previousCol]))
                         currentTile.classList.remove(getTileClass(board[row][col]))
@@ -412,7 +432,7 @@ function checkForMoves() {
 
 async function getHighscores() {
     let response = await fetch("http://localhost:8080/highscores")
-    let highscores = await response.json()
+    highscores = await response.json()
 
     for (let i = 0; i < highscores.length; i++){
         let highScoreEntry = document.createElement('li')
