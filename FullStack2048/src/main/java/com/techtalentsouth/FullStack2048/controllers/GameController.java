@@ -39,11 +39,11 @@ public class GameController {
 		if (highscores.size() == 0 || highscores.size() < MAX_HIGHSCORE_ENTRIES) {
 			gameRepository.save(highscore);
 		}
-		else if (highscore.getHighscore() > highscores.get(0).getHighscore()) {
+		else if (highscore.getHighscore() > highscores.get(MAX_HIGHSCORE_ENTRIES - 1).getHighscore()) {
 			gameRepository.save(highscore);
 			
 			if (gameRepository.count() > MAX_HIGHSCORE_ENTRIES) {
-				gameRepository.deleteById(highscores.get(0).getId());
+				gameRepository.deleteById(highscores.get(MAX_HIGHSCORE_ENTRIES - 1).getId());
 			}
 		}
 	}

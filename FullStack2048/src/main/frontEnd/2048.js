@@ -4,10 +4,12 @@ let domBoard = q("#board")
 let scoreDisplay = q("#score")
 let score = 0
 let highscores = {}
+let submittedHighscore = false
 
 let endGameModal = $('#end-game-modal')
 let endGameLabel = q('#end-game-label')
 let endGameBody = q('#end-game-body')
+
 let hasNextMoves = true
 let winner = false
 
@@ -99,6 +101,7 @@ function move(event) {
         endGameMessage.textContent = "You have run out of moves"
         let finalScore = endGameBody.children[1]
         finalScore.textContent = `Final Score: ${score}`
+        highscoreCheck()
     }
     else if (winner) {
         endGameModal.modal("show")
@@ -109,6 +112,7 @@ function move(event) {
         endGameMessage.textContent = " You've reached 2048!"
         let finalScore = endGameBody.children[1]
         finalScore.textContent = `Final Score: ${score}`
+        highscoreCheck()
     }
 }
 
@@ -149,7 +153,7 @@ function moveLeft() {
                     // Makes it so [4, 2, empty, 2] becomes [4, 4, empty, empty] instead of [8, empty, empty, empty]
                     else if (board[row][previousCol] === board[row][col] && mergibleColumns.includes(previousCol)) {
                         previousTile.classList.remove(getTileClass(board[row][previousCol]))
-                        board[row][previousCol] = 2048
+                        board[row][previousCol] *= 2
                         previousTile.textContent = board[row][previousCol]
                         previousTile.classList.add(getTileClass(board[row][previousCol]))
                         currentTile.classList.remove(getTileClass(board[row][col]))
@@ -430,6 +434,20 @@ function checkForMoves() {
     return false
 }
 
+// Check if player achieved a highscore
+// If they did, they will be able to enter their name and submit the highscore
+// If not, the form to submit the highscore will not appear
+// If they already did submit their highscore, they cannot submit it again. 
+function highscoreCheck() {
+    if (!submittedHighscore) {
+        if (highscores.length < 5 || highscores[highscores.length - 1].highscore < score) {
+            endGameBody.children[2].textContent = "You Achieved a Highscore! Submit Below!"
+            endGameBody.children[3].style.display = "block";
+        }
+    }
+}
+
+// Gets highscore data from the spring database
 async function getHighscores() {
     let response = await fetch("http://localhost:8080/highscores")
     highscores = await response.json()
@@ -442,6 +460,7 @@ async function getHighscores() {
     console.log(highscores)
 }
 
+// posts highscore data to the spring database
 async function postHighScore() {
     let name = q("#name").value
     
@@ -457,11 +476,14 @@ async function postHighScore() {
     })
     highscores = {}
     getHighscores()
+    
+    endGameBody.children[2].textContent = "";
+    endGameBody.children[3].style.display = "none";
+    submittedHighscore = true
 }
 
 getHighscores();
 setBoard(); 
-
 
 
 
