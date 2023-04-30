@@ -367,6 +367,9 @@ function moveDown(){
 function getTileClass(tileValue) {
     tileClass = null;
     switch (tileValue) {
+        case 0:
+            tileClass = "empty"
+            break
         case 2: 
             tileClass = "two"
             break
@@ -510,18 +513,49 @@ async function saveGame() {
     saveGameBody.children[3].textContent = `Your Save Key = ${saveKey}`
 }
 
+async function loadGame() {
+    let saveKey = q("#loadKey").value
+    let response = await fetch(`http://localhost:8080/loadGame?saveKey=${saveKey}`)
+    let loadData = await response.json()
+
+    score = loadData.score
+    scoreDisplay.textContent = `Score: ${score}`
+    
+    let savedBoard = [loadData.row1, loadData.row2, loadData.row3, loadData.row4]
+
+    for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 4; col++) {
+            let currentTile = domBoard.children[row].children[col]
+            currentTile.classList.remove(getTileClass(board[row][col]))
+            currentTile.textContent = savedBoard[row][col]
+            currentTile.classList.add(getTileClass(savedBoard[row][col]))
+        }
+    }
+
+    board = savedBoard
+}
+
 $("#highscore-board").on('show.bs.modal', function () {
     modalOpen = true
 });
 $("#highscore-board").on('hidden.bs.modal', function () {
     modalOpen = false
 });
+
 $("#save-game-modal").on('show.bs.modal', function () {
     modalOpen = true
 });
 $("#save-game-modal").on('hidden.bs.modal', function () {
     modalOpen = false
 });
+
+$("#load-game-modal").on('show.bs.modal', function () {
+    modalOpen = true
+});
+$("#load-game-modal").on('hidden.bs.modal', function () {
+    modalOpen = false
+});
+
 $("#end-game-modal").on('show.bs.modal', function () {
     modalOpen = true
 });

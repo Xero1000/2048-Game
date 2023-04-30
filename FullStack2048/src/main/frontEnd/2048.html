@@ -26,7 +26,7 @@
                     <a class="nav-link" href="#" aria-current="page" data-bs-toggle="modal" data-bs-target="#highscore-board">Highscore Board</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">Load Game</a>
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#load-game-modal">Load Game</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#save-game-modal">Save Game</a>
@@ -142,6 +142,28 @@
                         </form>
                         <p></p>
                         <p></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>                
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load Game Modal -->
+        <div id="load-game-modal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="load-game-label">Load Game</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div id="load-game-body" class="modal-body">
+                        <form>
+                            <label for="loadKey">Enter Your Save Key: </label>
+                            <input type="text" id="loadKey" name="loadKey">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick="loadGame()">Submit</button>
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>                
