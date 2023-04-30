@@ -11,6 +11,7 @@ let endGameLabel = q('#end-game-label')
 let endGameBody = q('#end-game-body')
 
 let saveGameBody = q("#save-game-body")
+let loadGameBody = q("#load-game-body")
 
 let hasNextMoves = true
 let winner = false
@@ -75,8 +76,8 @@ function setNewTile() {
 function move(event) {
     let key = event.key;
     
+    // If a modal is open, player cannot make any moves
     if (!modalOpen) {
-
         if (hasNextMoves && !winner) {
             if (key === "a" || key === "A" || key === "ArrowLeft") 
             {
@@ -408,12 +409,11 @@ function getTileClass(tileValue) {
     return tileClass
 }
 
+// Updates score and displays the change in DOM
 function updateScore(number) {
     score += number;
     scoreDisplay.textContent = `Score: ${score}`
 }
-
-
 
 // After each move, this function checks if the user
 // has another move they can make
@@ -491,50 +491,71 @@ async function postHighScore() {
     submittedHighscore = true
 }
 
+// saves current state of the board and user's score in database
+// player makes a save key to access the data when they want to load the game
+// Code will not take an empty key
 async function saveGame() {
     let saveKey = q("#saveKey").value
 
-    await fetch("http://localhost:8080/saveGame", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            saveKey: saveKey,
-            score: score,
-            row1: board[0],
-            row2: board[1],
-            row3: board[2],
-            row4: board[3]
+    if (saveKey != "") {
+        await fetch("http://localhost:8080/saveGame", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                saveKey: saveKey,
+                score: score,
+                row1: board[0],
+                row2: board[1],
+                row3: board[2],
+                row4: board[3]
+            })
         })
-    })
-
-    saveGameBody.children[2].textContent = "Game Saved"
-    saveGameBody.children[3].textContent = `Your Save Key = ${saveKey}`
+    
+        saveGameBody.children[2].textContent = "Game Saved"
+        saveGameBody.children[2].style.color = "green"
+        saveGameBody.children[3].textContent = `Your Save Key = ${saveKey}`
+    }
+    else {
+        saveGameBody.children[2].textContent = "Please enter a save key"
+        saveGameBody.children[2].style.color = "red"
+    }
+    saveGameBody.children[1].children[1].value = ""
 }
 
+// Player enters their save key to retrieve saved data and continue where they left off
+// Code will not take an empty value
 async function loadGame() {
     let saveKey = q("#loadKey").value
-    let response = await fetch(`http://localhost:8080/loadGame?saveKey=${saveKey}`)
-    let loadData = await response.json()
 
-    score = loadData.score
-    scoreDisplay.textContent = `Score: ${score}`
-    
-    let savedBoard = [loadData.row1, loadData.row2, loadData.row3, loadData.row4]
+    if (saveKey != "") {
+        let response = await fetch(`http://localhost:8080/loadGame?saveKey=${saveKey}`)
+        let loadData = await response.json()
+        
+        hasNextMoves = true
+        winner = false
 
-    for (let row = 0; row < 4; row++) {
-        for (let col = 0; col < 4; col++) {
-            let currentTile = domBoard.children[row].children[col]
-            currentTile.classList.remove(getTileClass(board[row][col]))
-            currentTile.textContent = savedBoard[row][col]
-            currentTile.classList.add(getTileClass(savedBoard[row][col]))
+        score = loadData.score
+        scoreDisplay.textContent = `Score: ${score}`
+        
+        let savedBoard = [loadData.row1, loadData.row2, loadData.row3, loadData.row4]
+        
+        // Sets each tile to the value and class of saved board values
+        for (let row = 0; row < 4; row++) {
+            for (let col = 0; col < 4; col++) {
+                let currentTile = domBoard.children[row].children[col]
+                currentTile.classList.remove(getTileClass(board[row][col]))
+                currentTile.textContent = savedBoard[row][col]
+                currentTile.classList.add(getTileClass(savedBoard[row][col]))
+            }
         }
+        board = savedBoard
     }
-
-    board = savedBoard
+    loadGameBody.children[0].children[1].value = ""
 }
 
+// JQuery code to prevent player from making any moves while a modal is open
 $("#highscore-board").on('show.bs.modal', function () {
     modalOpen = true
 });
@@ -563,63 +584,8 @@ $("#end-game-modal").on('hidden.bs.modal', function () {
     modalOpen = false
 });
 
+// At start of game, highscores are retrieved from database
+// and the board is initialized
 getHighscores();
 setBoard(); 
-
-
-
-
-
-// console.log(board[0]);
-// console.log(board[1]);
-// console.log(board[2]);
-// console.log(board[3]);
-// console.log("---MOVE LEFT---")
-// moveLeft();
-// console.log(board[0]);
-// console.log(board[1]);
-// console.log(board[2]);
-// console.log(board[3]);
-// console.log("---MOVE UP---")
-// moveUp();
-// console.log(board[0]);
-// console.log(board[1]);
-// console.log(board[2]);
-// console.log(board[3]);
-// console.log("---MOVE RIGHT---")
-// moveRight();
-// console.log(board[0]);
-// console.log(board[1]);
-// console.log(board[2]);
-// console.log(board[3]);
-// console.log("---MOVE DOWN---")
-// moveDown();
-// console.log(board[0]);
-// console.log(board[1]);
-// console.log(board[2]);
-// console.log(board[3]);
-// console.log("---MOVE LEFT---")
-// moveLeft();
-// console.log(board[0]);
-// console.log(board[1]);
-// console.log(board[2]);
-// console.log(board[3]);
-// console.log("---MOVE UP---")
-// moveUp();
-// console.log(board[0]);
-// console.log(board[1]);
-// console.log(board[2]);
-// console.log(board[3]);
-// console.log("---MOVE RIGHT---")
-// moveRight();
-// console.log(board[0]);
-// console.log(board[1]);
-// console.log(board[2]);
-// console.log(board[3]);
-// console.log("---MOVE DOWN---")
-// moveDown();
-// console.log(board[0]);
-// console.log(board[1]);
-// console.log(board[2]);
-// console.log(board[3]);
 
