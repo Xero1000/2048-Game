@@ -7,16 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.techtalentsouth.FullStack2048.models.SaveData;
 import com.techtalentsouth.FullStack2048.models.UserHighscore;
-import com.techtalentsouth.FullStack2048.repository.GameRepository;
+import com.techtalentsouth.FullStack2048.repository.HighscoreRepository;
+import com.techtalentsouth.FullStack2048.repository.SaveGameRepository;
 
 @RestController
 public class GameController {
 	
 	@Autowired
-	private GameRepository gameRepository;
+	private HighscoreRepository highscoreRepository;
+	@Autowired
+	private SaveGameRepository saveGameRepository;
+	
 	private List<UserHighscore> highscores = new ArrayList<>();
 	private final int MAX_HIGHSCORE_ENTRIES = 5;
 	
@@ -27,25 +33,36 @@ public class GameController {
 	
 	@GetMapping("/highscores")
 	public List<UserHighscore> getHighscores() {
-		highscores = gameRepository.findAll();
+		highscores = highscoreRepository.findAll();
 		sort(highscores);
 		return highscores;
 	}
 	
 	@PostMapping("/highscores")
 	public void addHighscore(@RequestBody UserHighscore highscore) {
-		highscores = gameRepository.findAll();
+		highscores = highscoreRepository.findAll();
 		sort(highscores);
 		if (highscores.size() == 0 || highscores.size() < MAX_HIGHSCORE_ENTRIES) {
-			gameRepository.save(highscore);
+			highscoreRepository.save(highscore);
 		}
 		else if (highscore.getHighscore() > highscores.get(MAX_HIGHSCORE_ENTRIES - 1).getHighscore()) {
-			gameRepository.save(highscore);
+			highscoreRepository.save(highscore);
 			
-			if (gameRepository.count() > MAX_HIGHSCORE_ENTRIES) {
-				gameRepository.deleteById(highscores.get(MAX_HIGHSCORE_ENTRIES - 1).getId());
+			if (highscoreRepository.count() > MAX_HIGHSCORE_ENTRIES) {
+				highscoreRepository.deleteById(highscores.get(MAX_HIGHSCORE_ENTRIES - 1).getId());
 			}
 		}
+	}
+	
+	@GetMapping("/loadGame")
+	public SaveData loadGame(@RequestParam(value="saveKey", required=true) String saveKey) {
+		SaveData dataToLoad = saveGameRepository.findBySaveKey(saveKey);
+		return dataToLoad;
+	}
+	
+	@PostMapping("/saveGame")
+	public void saveGame(@RequestBody SaveData saveData) {
+			saveGameRepository.save(saveData);
 	}
 	
 	public void sort(List<UserHighscore> highscores) {
