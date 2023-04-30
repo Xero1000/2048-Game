@@ -3,10 +3,6 @@ h1 {
     text-align: center;
 }
 
-form {
-    display: none;
-}
-
 #board {
     display: flex;
     flex-direction: column;
@@ -23,6 +19,10 @@ form {
 }
 
 #end-game-modal {
+    display: none;
+}
+
+#end-game-modal form {
     display: none;
 }
 

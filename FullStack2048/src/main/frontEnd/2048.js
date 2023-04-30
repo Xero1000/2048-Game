@@ -10,8 +10,11 @@ let endGameModal = $('#end-game-modal')
 let endGameLabel = q('#end-game-label')
 let endGameBody = q('#end-game-body')
 
+let saveGameBody = q("#save-game-body")
+
 let hasNextMoves = true
 let winner = false
+let modalOpen = false
 
 let highscoreBoardBody = q("#highscore-board-body")
 
@@ -71,48 +74,51 @@ function setNewTile() {
 // or arrow keys
 function move(event) {
     let key = event.key;
-    //console.log(key);
-    if (hasNextMoves && !winner) {
-        if (key === "a" || key === "A" || key === "ArrowLeft") 
-        {
-            moveLeft()
-        }
-        else if (key === "d" || key === "D" || key ==="ArrowRight")
-        {
-            moveRight()
-        }
-        else if (key === "w" || key === "W" || key ==="ArrowUp")
-        {
-            moveUp()
-        }
-        else if (key === "s" || key === "S" || key ==="ArrowDown")
-        {
-            moveDown()
-        }
-        hasNextMoves = checkForMoves()
-    }
     
-    if (!hasNextMoves) { 
-        endGameModal.modal("show")
-        endGameLabel.textContent = "Game Over"
-        endGameLabel.style.color = "red"
+    if (!modalOpen) {
 
-        let endGameMessage = endGameBody.children[0]
-        endGameMessage.textContent = "You have run out of moves"
-        let finalScore = endGameBody.children[1]
-        finalScore.textContent = `Final Score: ${score}`
-        highscoreCheck()
-    }
-    else if (winner) {
-        endGameModal.modal("show")
-        endGameLabel.textContent = "Congratulations!"
-        endGameLabel.style.color = "green"
-
-        let endGameMessage = endGameBody.children[0]
-        endGameMessage.textContent = " You've reached 2048!"
-        let finalScore = endGameBody.children[1]
-        finalScore.textContent = `Final Score: ${score}`
-        highscoreCheck()
+        if (hasNextMoves && !winner) {
+            if (key === "a" || key === "A" || key === "ArrowLeft") 
+            {
+                moveLeft()
+            }
+            else if (key === "d" || key === "D" || key ==="ArrowRight")
+            {
+                moveRight()
+            }
+            else if (key === "w" || key === "W" || key ==="ArrowUp")
+            {
+                moveUp()
+            }
+            else if (key === "s" || key === "S" || key ==="ArrowDown")
+            {
+                moveDown()
+            }
+            hasNextMoves = checkForMoves()
+        }
+        
+        if (!hasNextMoves) { 
+            endGameModal.modal("show")
+            endGameLabel.textContent = "Game Over"
+            endGameLabel.style.color = "red"
+    
+            let endGameMessage = endGameBody.children[0]
+            endGameMessage.textContent = "You have run out of moves"
+            let finalScore = endGameBody.children[1]
+            finalScore.textContent = `Final Score: ${score}`
+            highscoreCheck()
+        }
+        else if (winner) {
+            endGameModal.modal("show")
+            endGameLabel.textContent = "Congratulations!"
+            endGameLabel.style.color = "green"
+    
+            let endGameMessage = endGameBody.children[0]
+            endGameMessage.textContent = " You've reached 2048!"
+            let finalScore = endGameBody.children[1]
+            finalScore.textContent = `Final Score: ${score}`
+            highscoreCheck()
+        }
     }
 }
 
@@ -482,8 +488,50 @@ async function postHighScore() {
     submittedHighscore = true
 }
 
+async function saveGame() {
+    let saveKey = q("#saveKey").value
+
+    await fetch("http://localhost:8080/saveGame", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            saveKey: saveKey,
+            score: score,
+            row1: board[0],
+            row2: board[1],
+            row3: board[2],
+            row4: board[3]
+        })
+    })
+
+    saveGameBody.children[2].textContent = "Game Saved"
+    saveGameBody.children[3].textContent = `Your Save Key = ${saveKey}`
+}
+
+$("#highscore-board").on('show.bs.modal', function () {
+    modalOpen = true
+});
+$("#highscore-board").on('hidden.bs.modal', function () {
+    modalOpen = false
+});
+$("#save-game-modal").on('show.bs.modal', function () {
+    modalOpen = true
+});
+$("#save-game-modal").on('hidden.bs.modal', function () {
+    modalOpen = false
+});
+$("#end-game-modal").on('show.bs.modal', function () {
+    modalOpen = true
+});
+$("#end-game-modal").on('hidden.bs.modal', function () {
+    modalOpen = false
+});
+
 getHighscores();
 setBoard(); 
+
 
 
 

@@ -13,6 +13,7 @@ public class SaveData {
 	private Long id;
 	
 	private String saveKey;
+	private Integer score;
 	private Integer[] row1;
 	private Integer[] row2;
 	private Integer[] row3;
@@ -22,8 +23,9 @@ public class SaveData {
 		
 	}
 	
-	public SaveData(String saveKey, Integer[] row1, Integer[] row2, Integer[] row3, Integer[] row4) {
+	public SaveData(String saveKey, Integer score, Integer[] row1, Integer[] row2, Integer[] row3, Integer[] row4) {
 		this.saveKey = saveKey;
+		this.score = score;
 		this.row1 = row1;
 		this.row2 = row2;
 		this.row3 = row3;
@@ -36,6 +38,14 @@ public class SaveData {
 
 	public void setSaveKey(String saveKey) {
 		this.saveKey = saveKey;
+	}
+	
+	public Integer getScore() {
+		return score;
+	}
+	
+	public void setScore(Integer score) {
+		this.score = score;
 	}
 
 	public Integer[] getRow1() {
