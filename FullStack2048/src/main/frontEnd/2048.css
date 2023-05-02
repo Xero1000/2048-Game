@@ -1,16 +1,26 @@
+
+body {
+    background-image: url(https://wallpaperaccess.com/full/392777.jpg);
+    background-position: center;
+}
+
 h1 {
     font-size: 3em;
     text-align: center;
 }
 
+#score {
+    color: white;
+}
+
 #board {
     display: flex;
     flex-direction: column;
-    align-content: space-between;
     max-width: 60em;
     max-height: 60em;
     border-style: solid;
-    border-color: red;
+    border-color: white;
+
 }
 
 #highscore-board {
@@ -28,7 +38,6 @@ h1 {
 
 .board-row {
     display: flex;
-    justify-content: space-between;
     max-width: 60em;
     max-height: 15em;
 }
@@ -42,10 +51,11 @@ h1 {
     text-align: center;
     font-size: 3em;
     border-style: solid;
+    border-color: black;
 }
 
 .empty {
-    color: white;
+    color: transparent;
     border-color: black;
 }
 

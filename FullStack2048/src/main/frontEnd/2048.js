@@ -6,11 +6,13 @@ let score = 0
 let highscores = {}
 let submittedHighscore = false
 
-let endGameModal = $('#end-game-modal')
-let endGameLabel = q('#end-game-label')
+let endGameModal = $("#end-game-modal")
+let endGameLabel = q("#end-game-label")
 let endGameBody = q('#end-game-body')
 
 let saveGameBody = q("#save-game-body")
+
+let loadGameModal = $("#load-game-modal")
 let loadGameBody = q("#load-game-body")
 
 let hasNextMoves = true
@@ -494,28 +496,38 @@ async function postHighScore() {
 // saves current state of the board and user's score in database
 // player makes a save key to access the data when they want to load the game
 // Code will not take an empty key
+// If key already exists, an error message will be shown 
 async function saveGame() {
     let saveKey = q("#saveKey").value
 
     if (saveKey != "") {
-        await fetch("http://localhost:8080/saveGame", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                saveKey: saveKey,
-                score: score,
-                row1: board[0],
-                row2: board[1],
-                row3: board[2],
-                row4: board[3]
+        try {
+            let response = await fetch("http://localhost:8080/saveGame", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    saveKey: saveKey,
+                    score: score,
+                    row1: board[0],
+                    row2: board[1],
+                    row3: board[2],
+                    row4: board[3]
+                })
             })
-        })
+            if (!response.ok) {
+                throw new Error("Key already exists");
+            }
+            saveGameBody.children[2].textContent = "Game Saved"
+            saveGameBody.children[2].style.color = "green"
+            saveGameBody.children[3].textContent = `Your Save Key = ${saveKey}`
+
+        } catch(error) {
+            saveGameBody.children[2].textContent = error.message
+            saveGameBody.children[2].style.color = "red"
+        }
     
-        saveGameBody.children[2].textContent = "Game Saved"
-        saveGameBody.children[2].style.color = "green"
-        saveGameBody.children[3].textContent = `Your Save Key = ${saveKey}`
     }
     else {
         saveGameBody.children[2].textContent = "Please enter a save key"
@@ -526,61 +538,53 @@ async function saveGame() {
 
 // Player enters their save key to retrieve saved data and continue where they left off
 // Code will not take an empty value
+// If key doesn't exist, an error message is shown
 async function loadGame() {
     let saveKey = q("#loadKey").value
 
     if (saveKey != "") {
-        let response = await fetch(`http://localhost:8080/loadGame?saveKey=${saveKey}`)
-        let loadData = await response.json()
-        
-        hasNextMoves = true
-        winner = false
-
-        score = loadData.score
-        scoreDisplay.textContent = `Score: ${score}`
-        
-        let savedBoard = [loadData.row1, loadData.row2, loadData.row3, loadData.row4]
-        
-        // Sets each tile to the value and class of saved board values
-        for (let row = 0; row < 4; row++) {
-            for (let col = 0; col < 4; col++) {
-                let currentTile = domBoard.children[row].children[col]
-                currentTile.classList.remove(getTileClass(board[row][col]))
-                currentTile.textContent = savedBoard[row][col]
-                currentTile.classList.add(getTileClass(savedBoard[row][col]))
+        try {
+            let response = await fetch(`http://localhost:8080/loadGame?saveKey=${saveKey}`)
+            
+            if (!response.ok){
+                throw new Error("Key does not exist")
             }
+
+            let loadData = await response.json()
+            
+            hasNextMoves = true
+            winner = false
+    
+            score = loadData.score
+            scoreDisplay.textContent = `Score: ${score}`
+            
+            let savedBoard = [loadData.row1, loadData.row2, loadData.row3, loadData.row4]
+            
+            // Sets each tile to the value and class of saved board values
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    let currentTile = domBoard.children[row].children[col]
+                    currentTile.classList.remove(getTileClass(board[row][col]))
+                    currentTile.textContent = savedBoard[row][col]
+                    currentTile.classList.add(getTileClass(savedBoard[row][col]))
+                }
+            }
+            board = savedBoard
+            loadGameBody.children[1].textContent = "";
+            loadGameModal.modal("hide")
+        } catch(error) {
+            loadGameBody.children[1].textContent = error.message;
+            loadGameBody.children[1].style.color = "red"
         }
-        board = savedBoard
     }
     loadGameBody.children[0].children[1].value = ""
 }
 
 // JQuery code to prevent player from making any moves while a modal is open
-$("#highscore-board").on('show.bs.modal', function () {
+$(".modal").on('show.bs.modal', function () {
     modalOpen = true
 });
-$("#highscore-board").on('hidden.bs.modal', function () {
-    modalOpen = false
-});
-
-$("#save-game-modal").on('show.bs.modal', function () {
-    modalOpen = true
-});
-$("#save-game-modal").on('hidden.bs.modal', function () {
-    modalOpen = false
-});
-
-$("#load-game-modal").on('show.bs.modal', function () {
-    modalOpen = true
-});
-$("#load-game-modal").on('hidden.bs.modal', function () {
-    modalOpen = false
-});
-
-$("#end-game-modal").on('show.bs.modal', function () {
-    modalOpen = true
-});
-$("#end-game-modal").on('hidden.bs.modal', function () {
+$(".modal").on('hidden.bs.modal', function () {
     modalOpen = false
 });
 

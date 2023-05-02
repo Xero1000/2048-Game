@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,17 +59,28 @@ public class GameController {
 	
 	// Get request to load a saved game
 	// Searches for data to load with a provided save key 
+	// If save key doesn't exist, an error is returned
 	@GetMapping("/loadGame")
-	public SaveData loadGame(@RequestParam(value="saveKey", required=true) String saveKey) {
+	public ResponseEntity<SaveData> loadGame(@RequestParam(value="saveKey", required=true) String saveKey) {
 		SaveData dataToLoad = saveGameRepository.findBySaveKey(saveKey);
-		return dataToLoad;
+		if (dataToLoad == null) {
+			return new ResponseEntity<>(dataToLoad, HttpStatus.FORBIDDEN);
+		}
+		return new ResponseEntity<>(dataToLoad, HttpStatus.OK);
 	}
 	
 	// Post data to save a game
 	// Score, board data, and corresponding save key is posted to database
+	// If save key already exists, an error is returned
 	@PostMapping("/saveGame")
-	public void saveGame(@RequestBody SaveData saveData) {
-			saveGameRepository.save(saveData);
+	public ResponseEntity<Void> saveGame(@RequestBody SaveData saveData) {
+		SaveData existingSaveData = saveGameRepository.findBySaveKey(saveData.getSaveKey());
+		if (existingSaveData != null) {
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		
+		saveGameRepository.save(saveData);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
 	// sorts the highscores in descending order
