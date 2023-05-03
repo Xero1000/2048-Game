@@ -522,6 +522,7 @@ async function saveGame() {
             saveGameBody.children[2].textContent = "Game Saved"
             saveGameBody.children[2].style.color = "green"
             saveGameBody.children[3].textContent = `Your Save Key = ${saveKey}`
+            loadGameBody.children[1].textContent = ""
 
         } catch(error) {
             saveGameBody.children[2].textContent = error.message
@@ -572,10 +573,17 @@ async function loadGame() {
             board = savedBoard
             loadGameBody.children[1].textContent = "";
             loadGameModal.modal("hide")
+
+            saveGameBody.children[2].textContent = ""
+            saveGameBody.children[3].textContent = ""
         } catch(error) {
             loadGameBody.children[1].textContent = error.message;
             loadGameBody.children[1].style.color = "red"
         }
+    }
+    else {
+        loadGameBody.children[1].textContent = "Please enter a save key"
+        loadGameBody.children[1].style.color = "red"
     }
     loadGameBody.children[0].children[1].value = ""
 }

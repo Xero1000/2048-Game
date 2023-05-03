@@ -2,6 +2,7 @@
 body {
     background-image: url(https://wallpaperaccess.com/full/392777.jpg);
     background-position: center;
+    background-size: auto 82em;
 }
 
 h1 {
@@ -102,5 +103,6 @@ h1 {
 .twenty-forty-eight {
     color: white;
     background: rgb(0, 0, 0);
+    border-color: white;
 }
 
