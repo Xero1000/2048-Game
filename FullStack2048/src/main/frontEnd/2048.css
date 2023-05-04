@@ -10,6 +10,15 @@ h1 {
     text-align: center;
 }
 
+h5 {
+    text-align: center;
+    font-weight: bold;
+}
+
+span {
+    font-weight: bold;
+}
+
 #score {
     color: white;
 }
@@ -61,7 +70,7 @@ h1 {
 }
 
 .two {
-    background: rgb(199, 199, 199);
+    background: white;
 }
 
 .four {

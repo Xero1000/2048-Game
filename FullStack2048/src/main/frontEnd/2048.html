@@ -25,6 +25,9 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto me-5 mb-2 mb-lg-0">
                   <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#how-to-play">How To Play</a>
+                  </li>
+                  <li class="nav-item">
                     <a class="nav-link" href="#" aria-current="page" data-bs-toggle="modal" data-bs-target="#highscore-board">Highscore Board</a>
                   </li>
                   <li class="nav-item">
@@ -79,6 +82,49 @@
                 </div>
             </div>
         </div>
+
+        <!-- How To Play Modal -->
+        <div id="how-to-play" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">How To Play</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div id="how-to-play-body" class="modal-body">
+                        <h5>Controls</h5>
+                        <ul>
+                            <li><span>Move All Tiles Left:</span> a / left arrow key</li>
+                            <li><span>Move All Tiles Right:</span> d / right arrow key</li>
+                            <li><span>Move All Tiles Up:</span> w / up arrow key</li>
+                            <li><span>Move All Tiles Down:</span> s / down arrow key</li>
+                        </ul>
+                        <h5>Tiles</h5>
+                        <ul>
+                            <li>Each move shifts every tile on the board as far in that direction as possible</li>
+                            <li>Tiles with the same value will merge into one tile, whose value will be multipled by 2</li>
+                            <li><span>Example:</span> Two tiles with value of 2 become one tile with a value of 4. Two 4s become one 8, two 8s become one 16, and so on</li>
+                            <li>The value of each new tile as a result of these merges is added to your score</li>
+                        </ul>
+                        <h5>New Tiles</h5>
+                        <ul>
+                            <li>At the start of the game, two tiles are generated in random positions</li>
+                            <li>After each move, a new tile will be generated in a random empty position</li>
+                            <li>Each newly generated tile has a 90% chance of having the value of 2</li>
+                            <li>The other 10% of the time the value will be a 4</li>
+                        </ul>
+                        <h5>Objective</h5>
+                        <ul>
+                            <li>If you can create the 2048 tile, <span>you win the game</span></li>
+                            <li>However, if you run out of space on the board and are also unable to make any new moves, <span>you lose</span></li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>   
 
         <!-- Highscore Board -->
          <div id="highscore-board" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
@@ -162,8 +208,8 @@
                     </div>
                     <div id="end-game-body" class="modal-body">
                         <h1></h1>
-                        <h1></h1>
-                        <h1></h1>
+                        <h2 class="text-center mt-5"></h2>
+                        <h3 class="text-center mt-5 mb-5"></h3>
                         <form>
                             <label for="name">Enter Name: </label>
                             <input type="text" id="name" name="name">
